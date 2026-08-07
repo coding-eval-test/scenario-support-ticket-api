@@ -13,6 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // --- application services (registered as features are added) ---
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<IAgentService, AgentService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
 // --- end application services ---
 
 builder.Services.AddControllers()
