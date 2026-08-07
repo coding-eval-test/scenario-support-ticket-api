@@ -1,4 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using SupportTicketApi.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("Default")
+                      ?? "Data Source=support-tickets.db"));
 
 // --- application services (registered as features are added) ---
 // --- end application services ---
