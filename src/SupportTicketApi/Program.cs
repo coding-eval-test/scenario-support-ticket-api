@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using SupportTicketApi.Data;
 using SupportTicketApi.Middleware;
+using SupportTicketApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // --- application services (registered as features are added) ---
 builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddScoped<IAgentService, AgentService>();
 // --- end application services ---
 
 builder.Services.AddControllers()
