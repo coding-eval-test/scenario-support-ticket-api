@@ -22,7 +22,7 @@ public class AgentsRegressionTests : IClassFixture<ApiFactory>
         Assert.NotNull(agents);
         Assert.Equal(8, agents!.Count);
         Assert.Equal(Enumerable.Range(1, 8), agents.Select(a => a.Id));
-        Assert.Single(agents.Where(a => !a.IsActive));
+        Assert.Single(agents, a => !a.IsActive);
         Assert.Equal(8, agents.Single(a => !a.IsActive).Id);
     }
 

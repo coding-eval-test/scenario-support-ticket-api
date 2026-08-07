@@ -59,7 +59,7 @@ public class S2TicketCommentsTests : IClassFixture<ApiFactory>
         var comments = await ReadAsync("/api/tickets/1/comments?includeInternal=true");
 
         Assert.Equal(3, comments.Count);
-        Assert.Single(comments.Where(c => c.IsInternal));
+        Assert.Single(comments, c => c.IsInternal);
     }
 
     [Fact]
