@@ -70,8 +70,27 @@ jobs:
 
       # Regression is the one category with inverted semantics — it must pass —
       # so it stays named explicitly rather than coming from the manifest loop.
-      - name: Regression suite must be green
-        run: dotnet test --no-build --configuration Release --filter Category=Regression
+      # Its executed count is asserted too: an unmatched or fully skipped filter
+      # exits 0, and "green because nothing ran" must fail here, not ship.
+      - name: Regression suite must be green, and must have executed tests
+        shell: bash
+        run: |
+          dotnet test --no-build --configuration Release \
+            --filter Category=Regression \
+            --logger "trx;LogFileName=Regression.trx" \
+            --results-directory TestResults
+
+          found=0
+          if [ -f "TestResults/Regression.trx" ]; then
+            found=$(sed -n 's/.*<Counters[^>]* executed="\([0-9]*\)".*/\1/p' \
+                      "TestResults/Regression.trx" | head -1)
+            found=${found:-0}
+          fi
+          if [ "$found" -eq 0 ]; then
+            echo "::error::Regression executed 0 tests — the green check checked nothing."
+            exit 1
+          fi
+          echo "Regression green with ${found} executed tests."
 
       - name: Every work item must ship red, and must have tests
         shell: bash
@@ -86,7 +105,7 @@ jobs:
 
             found=0
             if [ -f "TestResults/${category}.trx" ]; then
-              found=$(sed -n 's/.*<Counters[^>]*total="\([0-9]*\)".*/\1/p' \
+              found=$(sed -n 's/.*<Counters[^>]* executed="\([0-9]*\)".*/\1/p' \
                         "TestResults/${category}.trx" | head -1)
               found=${found:-0}
             fi

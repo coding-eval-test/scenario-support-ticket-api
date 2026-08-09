@@ -42,10 +42,11 @@ for category in $categories; do
     suite_passed=0
   fi
 
-  # An empty filter exits 0, so the exit code alone would report a phantom PASS.
+  # An empty filter exits 0, and a fully skipped suite ([Fact(Skip=...)]) also
+  # exits 0, so the exit code alone would report a phantom PASS.
   found=0
   if [ -f "$root/TestResults/${category}.trx" ]; then
-    found=$(sed -n 's/.*<Counters[^>]*total="\([0-9]*\)".*/\1/p' \
+    found=$(sed -n 's/.*<Counters[^>]* executed="\([0-9]*\)".*/\1/p' \
               "$root/TestResults/${category}.trx" | head -1)
     found=${found:-0}
   fi

@@ -39,10 +39,11 @@ foreach ($category in $categories) {
         --results-directory (Join-Path $root 'TestResults')
     $suitePassed = ($LASTEXITCODE -eq 0)
 
-    # An empty filter exits 0, so the exit code alone would report a phantom PASS.
+    # An empty filter exits 0, and a fully skipped suite ([Fact(Skip=...)]) also
+    # exits 0, so the exit code alone would report a phantom PASS.
     $found = 0
     if (Test-Path $trx) {
-        $match = Select-String -Path $trx -Pattern '<Counters[^>]*total="(\d+)"' | Select-Object -First 1
+        $match = Select-String -Path $trx -Pattern '<Counters[^>]* executed="(\d+)"' | Select-Object -First 1
         if ($match) { $found = [int]$match.Matches[0].Groups[1].Value }
     }
 
